@@ -12,22 +12,22 @@ In our case, mow. We will use Unity 2021.2.7 (but in fact it is not so important
 
 Below you can see the final result:
 
-![Demo!](2023-06-05-gpu-instanced-grass-in-unity/1.gif "Demo")
+![Demo!](https://raw.githubusercontent.com/utkaka/blog/main/_posts/2023-06-05-gpu-instanced-grass-in-unity/1.gif "Demo")
 
 ### Preparation
 First of all we need to create a low poly grass stalk.
 Since the camera in the game never rotates, we can save a little and use a mesh with only 4 vertices:
 
-![Mesh!](2023-06-05-gpu-instanced-grass-in-unity/2.png "Mesh")
+![Mesh!](https://raw.githubusercontent.com/utkaka/blog/main/_posts/2023-06-05-gpu-instanced-grass-in-unity/2.png "Mesh")
 
 It is unlikely that this mesh will look like grass if it remains static, so we need something that looks like wind.
 We will do it with a shader and for this we need to properly prepare the UV: bottom vertices should be mapped to (u, 0) and the top one to (u, 1). Something like that:
 
-![UV!](2023-06-05-gpu-instanced-grass-in-unity/3.png "UV")
+![UV!](https://raw.githubusercontent.com/utkaka/blog/main/_posts/2023-06-05-gpu-instanced-grass-in-unity/3.png "UV")
 
 And here is the shader subgraph for the wind effect:
 
-![Wind Subgraph!](2023-06-05-gpu-instanced-grass-in-unity/4.png "Wind Subgraph")
+![Wind Subgraph!](https://raw.githubusercontent.com/utkaka/blog/main/_posts/2023-06-05-gpu-instanced-grass-in-unity/4.png "Wind Subgraph")
 
 As input, it takes several parameters responsible for the wind and the world position of the vertex.
 To calculate its wind shear, we run the position through Simple Noise so that all the blades of grass on the stage sway out of sync.
@@ -45,7 +45,7 @@ Let's see how the SRP Batcher will show itself on the number of instances that w
 
 Let’s make full shader:
 
-![Full GameObject Graph!](2023-06-05-gpu-instanced-grass-in-unity/5.png "Full GameObject Graph")
+![Full GameObject Graph!](https://raw.githubusercontent.com/utkaka/blog/main/_posts/2023-06-05-gpu-instanced-grass-in-unity/5.png "Full GameObject Graph")
 
 And initialize the field:
 
@@ -83,7 +83,7 @@ public override void Init(Vector2[,] grassEntities, Vector2 fieldSize) {
 ```
 And here is what we got:
 
-![SRP Test!](2023-06-05-gpu-instanced-grass-in-unity/6.png "SRP Test")
+![SRP Test!](https://raw.githubusercontent.com/utkaka/blog/main/_posts/2023-06-05-gpu-instanced-grass-in-unity/6.png "SRP Test")
 
 Visually, we achieved what we wanted (in the real game there is another camera angle, a lot of decorations, textured ground and so on, so it looks better, though instances count is the same: 15-20k).
 But the FPS is too low. Therefore we need to try optimizations.
@@ -133,11 +133,11 @@ We just need to set [MaterialPropertyBlock](https://docs.unity3d.com/ScriptRefer
 Besides that, MaterialPropertyBlock could be very useful in case when we want to assign individual properties to different instances (e.g color).
 And after one of the above we can see that instancing is working:
 
-![Frame Debugger!](2023-06-05-gpu-instanced-grass-in-unity/7.png "Frame Debugger")
+![Frame Debugger!](https://raw.githubusercontent.com/utkaka/blog/main/_posts/2023-06-05-gpu-instanced-grass-in-unity/7.png "Frame Debugger")
 
 Let’s take measurements:
 
-![GameObject Instancing!](2023-06-05-gpu-instanced-grass-in-unity/8.png "GameObject Instancing")
+![GameObject Instancing!](https://raw.githubusercontent.com/utkaka/blog/main/_posts/2023-06-05-gpu-instanced-grass-in-unity/8.png "GameObject Instancing")
 
 ### Graphics API
 
@@ -184,7 +184,7 @@ because now the shader has to take their positions from the ComputeBuffer.
 
 So let’s modify the shader:
 
-![Modified shader!](2023-06-05-gpu-instanced-grass-in-unity/9.png "Modified shader")
+![Modified shader!](https://raw.githubusercontent.com/utkaka/blog/main/_posts/2023-06-05-gpu-instanced-grass-in-unity/9.png "Modified shader")
 
 Here you can see 2 new nodes with custom functions.
 
@@ -223,7 +223,7 @@ void ShaderGraphFunction_half (out half2 PositionOut) {
 
 And the measurements:
 
-![Graphics API Instancing!](2023-06-05-gpu-instanced-grass-in-unity/10.png "Graphics API Instancing")
+![Graphics API Instancing!](https://raw.githubusercontent.com/utkaka/blog/main/_posts/2023-06-05-gpu-instanced-grass-in-unity/10.png "Graphics API Instancing")
 
 In addition to good performance, this method allows us to use the Compute Shaders to [calculate procedural animations directly on the GPU](https://www.ronja-tutorials.com/post/051-draw-procedural/).
 
@@ -293,11 +293,11 @@ public override void UpdatePositions(Vector2Int bottomLeftCameraCell, Vector2Int
 
 And now measure the most performant variant:
 
-![Simple culling!](2023-06-05-gpu-instanced-grass-in-unity/11.png "Simple culling")
+![Simple culling!](https://raw.githubusercontent.com/utkaka/blog/main/_posts/2023-06-05-gpu-instanced-grass-in-unity/11.png "Simple culling")
 
 And this is how it looks on acceptable for some games ~30 FPS:
 
-![More instances!](2023-06-05-gpu-instanced-grass-in-unity/12.png "More instances")
+![More instances!](https://raw.githubusercontent.com/utkaka/blog/main/_posts/2023-06-05-gpu-instanced-grass-in-unity/12.png "More instances")
 
 It's worth to mention a noticeable gain in memory usage due to the refusal to use GameObject
 
