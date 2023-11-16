@@ -406,4 +406,4 @@ While we're still a long way from creating a game, we've achieved a promising re
 
 You can review the complete source code [here](https://github.com/utkaka/unity-instanced-voxels).
 
-I'd like to say that in the next part, we'll be handling the runtime rendering of these voxels, but it's not time yet. In the upcoming section, we'll continue preparing the voxels for runtime use. Currently, we've generated only the 'outer' voxels of the model, but we also need the 'inner' ones (after all, hollow model destruction isn't as enjoyable). We'll also be adding bones and animations to our models. Stay tuned.
+I'd like to say that in the [next part](https://utkaka.github.io/blog/2023/11/16/voxel-rendering-in-unity-part-2.html), we'll be handling the runtime rendering of these voxels, but it's not time yet. In the upcoming section, we'll continue preparing the voxels for runtime use. Currently, we've generated only the 'outer' voxels of the model, but we also need the 'inner' ones (after all, hollow model destruction isn't as enjoyable). We'll also be adding bones and animations to our models. Stay tuned.
