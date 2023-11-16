@@ -5,7 +5,7 @@ date: 2023-11-16
 
 ![Voxelized spider!](https://raw.githubusercontent.com/utkaka/blog/main/_posts/2023-11-16-voxel-rendering-in-unity-part-2/1-Landing.gif)
 
-Last time, we learned how to construct hollow voxel models from arbitrary (almost) meshes. However, we still lack animation support (static voxels are dull) and 'inner' voxels (which, in addition to aesthetics, will play a crucial role in subsequent runtime optimization). In this article, we'll address these aspects.
+[Last time](https://utkaka.github.io/blog/2023/09/28/voxel-rendering-in-unity-part-1.html), we learned how to construct hollow voxel models from arbitrary (almost) meshes. However, we still lack animation support (static voxels are dull) and 'inner' voxels (which, in addition to aesthetics, will play a crucial role in subsequent runtime optimization). In this article, we'll address these aspects.
 
 ## Bones
 
@@ -254,3 +254,5 @@ Now that we have the complete set of necessary data that needs to be preserved f
 ## Summary
 
 We now have a complete voxel model with animation. I've created test classes to render these models using regular GameObjects. If you attempt to run the demo with a voxel size of 0.01, you'll likely experience performance issues on your PC. Considering our goal to render this on mobile devices, our next step will focus on optimizing the runtime rendering.
+
+The complete source code can still be found [here](https://github.com/utkaka/unity-instanced-voxels).
