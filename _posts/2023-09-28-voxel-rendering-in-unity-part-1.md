@@ -131,17 +131,17 @@ Let's formalize the final algorithm for mesh voxelization:
 
 ### Advanced Mesh API
 
-Since we need to perform a substantial volume of computations on a large dataset, it makes sense to utilize the Unity Job System. It's convenient to work with the [Advanced Mesh API](https://docs.unity.cn/ScriptReference/Mesh.MeshData.html) for this purpose. Its primary benefit is that it provides us with the MeshData struct, which we can pass to a job for processing. You can find a little more information about this [here](https://catlikecoding.com/unity/tutorials/procedural-meshes/creating-a-mesh/#3).
+Since we need to perform a substantial volume of computations on a large dataset, it makes sense to utilize the Unity Job System. It's convenient to work with the [Advanced Mesh API](https://docs.unity3d.com/ScriptReference/Mesh.MeshData.html) for this purpose. Its primary benefit is that it provides us with the MeshData struct, which we can pass to a job for processing. You can find a little more information about this [here](https://catlikecoding.com/unity/tutorials/procedural-meshes/creating-a-mesh/#3).
 
-As we have chosen to process multiple meshes simultaneously, [MeshDataArray](https://docs.unity.cn/ScriptReference/Mesh.MeshDataArray.html) will be useful.
+As we have chosen to process multiple meshes simultaneously, [MeshDataArray](https://docs.unity3d.com/ScriptReference/Mesh.MeshDataArray.html) will be useful.
 
-With minor differences, this API can be used in the same way as the standard mesh API. For each mesh, we can use methods such as [GetIndices](https://docs.unity.cn/ScriptReference/Mesh.MeshData.GetIndices.html), [GetVertices](https://docs.unity.cn/ScriptReference/Mesh.MeshData.GetVertices.html), etc. However, this approach has two drawbacks:
+With minor differences, this API can be used in the same way as the standard mesh API. For each mesh, we can use methods such as [GetIndices](https://docs.unity3d.com/ScriptReference/Mesh.MeshData.GetIndices.html), [GetVertices](https://docs.unity3d.com/ScriptReference/Mesh.MeshData.GetVertices.html), etc. However, this approach has two drawbacks:
 
 - It requires additional memory allocation for NativeArrays that will be populated with the necessary data.
 
 - Since NativeArrays cannot be created inside a job, we must process each mesh in separate jobs, and do so sequentially because each of these jobs needs to write to the shared voxels array.
 
-Hence, we can utilize methods like [GetIndexData](https://docs.unity.cn/ScriptReference/Mesh.MeshData.GetIndexData.html) and [GetVertexData](https://docs.unity.cn/ScriptReference/Mesh.MeshData.GetVertexData.html) which allow us to read mesh data directly without memory allocations and data copying. However, to do this, we need to know the exact layout of the mesh. Since we are creating a converter for arbitrary meshes (while keeping in mind the triangle topology), we must be prepared for any layout.
+Hence, we can utilize methods like [GetIndexData](https://docs.unity3d.com/ScriptReference/Mesh.MeshData.GetIndexData.html) and [GetVertexData](https://docs.unity3d.com/ScriptReference/Mesh.MeshData.GetVertexData.html) which allow us to read mesh data directly without memory allocations and data copying. However, to do this, we need to know the exact layout of the mesh. Since we are creating a converter for arbitrary meshes (while keeping in mind the triangle topology), we must be prepared for any layout.
 
 We can view the specific mesh's structure in the inspector of the editor. For example, here is what my test spider looks like:
 
@@ -151,7 +151,7 @@ The API also provides appropriate methods to retrieve this information.
 
 Unfortunately, JobSystem has certain inherent limitations. For instance, it's impossible to use interfaces because we might attempt to pass a managed object into them. Therefore, it's challenging to avoid code duplication. However, we will attempt to minimize it by using generics.
 
-First, we need to read the indices of the mesh's vertices. This is relatively straightforward because there are only two possible formats: 16-bit and 32-bit. You can determine the format using the [indexFormat](https://docs.unity.cn/ScriptReference/Mesh.MeshData-indexFormat.html) property.
+First, we need to read the indices of the mesh's vertices. This is relatively straightforward because there are only two possible formats: 16-bit and 32-bit. You can determine the format using the [indexFormat](https://docs.unity3d.com/ScriptReference/Mesh.MeshData-indexFormat.html) property.
 
 ```c#
 if (meshData.indexFormat == IndexFormat.UInt16) {
@@ -163,7 +163,7 @@ if (meshData.indexFormat == IndexFormat.UInt16) {
 }
 ```
 
-A mesh itself doesn't consist of triangles; it consists of submeshes, which can (and in our case, should) contain triangles. To do this, we use the [GetSubMesh](https://docs.unity.cn/ScriptReference/Mesh.MeshData.GetSubMesh.html) method, which returns [SubMeshDescriptor](https://docs.unity.cn/ScriptReference/Rendering.SubMeshDescriptor.html), and iterate through all the submeshes.
+A mesh itself doesn't consist of triangles; it consists of submeshes, which can (and in our case, should) contain triangles. To do this, we use the [GetSubMesh](https://docs.unity3d.com/ScriptReference/Mesh.MeshData.GetSubMesh.html) method, which returns [SubMeshDescriptor](https://docs.unity3d.com/ScriptReference/Rendering.SubMeshDescriptor.html), and iterate through all the submeshes.
 
 ```c#
 for (var j = 0; j < meshData.subMeshCount; j++) {  
@@ -181,7 +181,7 @@ My test meshes had only one submesh each, so the correctness of this code should
 
 Now that we have the vertex indices for each triangle, we need to read their positions to implement the SAT algorithm.
 
-In general, vertex attributes can vary in [data streams](https://docs.unity.cn/ScriptReference/Mesh.MeshData.GetVertexAttributeStream.html), have different [dimensions](https://docs.unity.cn/ScriptReference/Mesh.MeshData.GetVertexAttributeDimension.html), and use diverse [formats](https://docs.unity.cn/ScriptReference/Mesh.MeshData.GetVertexAttributeFormat.html). Additionally, it's important to note that certain meshes may lack specific attributes, such as [bone data](https://docs.unity.cn/ScriptReference/Rendering.VertexAttribute.BlendIndices.html).
+In general, vertex attributes can vary in [data streams](https://docs.unity3d.com/ScriptReference/Mesh.MeshData.GetVertexAttributeStream.html), have different [dimensions](https://docs.unity3d.com/ScriptReference/Mesh.MeshData.GetVertexAttributeDimension.html), and use diverse [formats](https://docs.unity3d.com/ScriptReference/Mesh.MeshData.GetVertexAttributeFormat.html). Additionally, it's important to note that certain meshes may lack specific attributes, such as [bone data](https://docs.unity3d.com/ScriptReference/Rendering.VertexAttribute.BlendIndices.html).
 
 Some attributes consistently have the same format and dimension. For instance, vertex positions are always in the format of Vector3. Since we anticipate the assistance of the Burst Compiler, we will use float3 for this purpose.
 
