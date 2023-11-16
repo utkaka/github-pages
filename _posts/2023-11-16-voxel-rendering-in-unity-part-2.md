@@ -1,3 +1,8 @@
+---
+title: "Voxel rendering in Unity (Part 2)"
+date: 2023-11-16
+---
+
 ![Voxelized spider!](https://raw.githubusercontent.com/utkaka/blog/main/_posts/2023-11-16-voxel-rendering-in-unity-part-2/1-Landing.gif)
 
 Last time, we learned how to construct hollow voxel models from arbitrary (almost) meshes. However, we still lack animation support (static voxels are dull) and 'inner' voxels (which, in addition to aesthetics, will play a crucial role in subsequent runtime optimization). In this article, we'll address these aspects.
