@@ -665,9 +665,9 @@ public static float3 GammaToLinearSpace(byte3 sRGB) {
 
 Therefore, I initially decided to perform these calculations on the CPU during the model's initialization, and subsequently pass the ready-made values for rendering. Consequently, for each voxel, we store and transmit 28 bytes:
 
-1. float3 for the position = 12 байт.
-2. float3 for the color = 12 байт.
-3. uint for the bone index = 4 байта.
+1. float3 for the position = 12 bytes.
+2. float3 for the color = 12 bytes.
+3. uint for the bone index = 4 bytes.
 
 Well then, let's try to conduct all the calculations in the shader, thereby reducing the volume of data transferred. In the [official documentation](https://docs.unity3d.com/Manual/SL-DataTypesAndPrecision.html), it is stated that: ***"Direct3D 11, OpenGL ES 3, Metal, and other modern platforms have proper support for integer data types, so using bit shifts and bit masking works as expected."***
 
