@@ -150,7 +150,8 @@ voxel_position_out = rotated_point + animation_position;
 |16900|199.64|0.20|
 |130050|676.93|422.79|
 |**1020100**\*|4486.10|2942.14|
-\* **New test**
+
+\* **A new test**
 
 In the case of instancing, noticeable issues only begin to appear with 1,020,100 voxels. It's evident from the table that the load starts shifting towards the GPU. Once again, nothing surprising, as the cube consists of 24 vertices, and our scene, despite its visual simplicity, contains 24 * 1,020,100 = 24,482,400 vertices. Therefore, it is crucial to reduce this number.
 
