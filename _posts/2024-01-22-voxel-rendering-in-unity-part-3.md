@@ -262,6 +262,7 @@ It's time to check the tests:
 |130050|269.35|0.29|
 |1020100|349.97|96.08|
 |**16581375**\*|1473.81|1172.83|
+
 \* **A new test**
 
 GPU workload has decreased by ≈ 30 times!
